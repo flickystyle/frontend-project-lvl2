@@ -1,0 +1,23 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "second project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flickystyle/frontend-project-lvl2.git"
+  },
+  "author": "flickystyle",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/flickystyle/frontend-project-lvl2/issues"
+  },
+  "type": "module",
+  "homepage": "https://github.com/flickystyle/frontend-project-lvl2#readme",
+  "dependencies": {
+    "commander": "^8.3.0"
+  }
+}
