@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "0.0.1",
   "description": "second project",
-  "main": "index.js",
+  "main": "bin/gendiff.js",
   "bin": {
     "gendiff": "bin/gendiff.js"
   },
@@ -23,5 +23,10 @@
   "dependencies": {
     "commander": "^8.3.0",
     "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "eslint": "^8.5.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3"
   }
 }
