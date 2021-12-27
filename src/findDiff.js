@@ -20,14 +20,10 @@ const findDiff = (file1,file2) => {
              else if (!_.has(parseFile1, key) && _.has(parseFile2, key)) {
               acc[`+ ${key}`] = parseFile2[key];
             }else if (
-              _.has(parseFile1, key) &&
-              _.has(parseFile2, key) &&
-              parseFile1[key] === parseFile2[key]
-            ) {
+              _.has(parseFile1, key) && _.has(parseFile2, key) && parseFile1[key] === parseFile2[key]) {
               acc[`  ${key}`] = parseFile1[key];
             } else if (
-              _.has(parseFile1, key) &&
-              _.has(parseFile2, key) &&
+              _.has(parseFile1, key) && _.has(parseFile2, key) &&
               parseFile1[key] !== parseFile2[key]
             ) {
               acc[`- ${key}`] = parseFile1[key];
