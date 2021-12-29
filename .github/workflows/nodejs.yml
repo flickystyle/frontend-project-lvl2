@@ -1,12 +1,9 @@
 name: Node CI
 
-on:
-  - push
+on: push
 
 jobs:
   build:
-
-   
     runs-on: ubuntu-latest
 
     strategy:
@@ -34,6 +31,6 @@ jobs:
         uses: paambaati/codeclimate-action@v2.7.4
         
         env:
-          CC_TEST_REPORTER_ID: ${{ secrets.7f68ade2da583f583e8b500351dfcf84e10d29fd1e412e8b37787f4e3a0dd77b }}
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageCommand: make test-coverage
