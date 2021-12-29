@@ -17,6 +17,6 @@ const answer = {
 
 const correctAnswer = JSON.stringify(answer, null, 2);
 
-test('fenDiff', () => {
+test('findDiff', () => {
   expect(findDiff(getFixturePath('file1.json'), getFixturePath('file2.json'))).toEqual(correctAnswer);
 });
