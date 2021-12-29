@@ -10,10 +10,10 @@ const findDiff = (file1, file2) => {
   const parseFile1 = getParseFileData(file1);
   const parseFile2 = getParseFileData(file2);
 
-  const parseFile1Keys = Object.keys(parseFile1);
-  const parseFile2Keys = Object.keys(parseFile2);
+  const firstFileKeys = Object.keys(parseFile1);
+  const secondFileKeys = Object.keys(parseFile2);
 
-  const sortedKeys = _.union(parseFile1Keys, parseFile2Keys).sort();
+  const sortedKeys = _.union(firstFileKeys, secondFileKeys).sort();
 
   const result = sortedKeys.reduce((acc, key) => {
     if (_.has(parseFile1, key) && !_.has(parseFile2, key)) {
