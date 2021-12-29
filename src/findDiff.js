@@ -2,7 +2,9 @@ import _ from 'lodash';
 import { readFileSync } from 'fs';
 import path from 'path';
 
-const getParseFileData = (filePath) => JSON.parse(readFileSync(path.resolve('__fixtures__', filePath)));
+const getParseFileData = (filePath) => JSON.parse(
+  readFileSync(path.resolve(process.cwd(), filePath)),
+);
 
 const findDiff = (file1, file2) => {
   const parseFile1 = getParseFileData(file1);
