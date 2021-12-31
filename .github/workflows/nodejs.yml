@@ -26,7 +26,6 @@ jobs:
       - name: Run linter
         run: |
           make lint
-      - name: Run test
 
       - name: Test & publish code coverage
         
