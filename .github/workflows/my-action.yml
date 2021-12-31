@@ -1,6 +1,8 @@
 name: my-action
 
-on: push
+on:
+  push:
+    branches: [ main ]
 
 jobs:
   build:
