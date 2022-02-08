@@ -14,9 +14,14 @@ const answer = {
   '+ timeout': 20,
   '+ verbose': true,
 };
+const result = JSON.stringify(answer, null, 2);
+const correctAnswer = result.replace(/"/g, '').replace(/,/g, '');
 
-const correctAnswer = JSON.stringify(answer, null, 2);
-
-test('findDiff', () => {
+test('findDiffJson', () => {
   expect(findDiff(getFixturePath('file1.json'), getFixturePath('file2.json'))).toEqual(correctAnswer);
 });
+test('findDiffYaml', () => {
+  expect(findDiff(getFixturePath('file3.yaml'), getFixturePath('file4.yml'))).toEqual(correctAnswer);
+});
+// test('anotherFormat',() =>{
+// })
