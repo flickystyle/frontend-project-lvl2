@@ -1,21 +1,16 @@
 import _ from 'lodash';
-import { readFileSync } from 'fs';
-import path from 'path';
-
-const getParseFileData = (filePath) => JSON.parse(
-  readFileSync(path.resolve(process.cwd(), filePath)),
-);
+import findPath from './findPath.js';
 
 const findDiff = (file1, file2) => {
-  const parseFile1 = getParseFileData(file1);
-  const parseFile2 = getParseFileData(file2);
+  const parseFile1 = findPath(file1);
+  const parseFile2 = findPath(file2);
 
   const firstFileKeys = Object.keys(parseFile1);
   const secondFileKeys = Object.keys(parseFile2);
 
   const sortedKeys = _.union(firstFileKeys, secondFileKeys).sort();
 
-  const result = sortedKeys.reduce((acc, key) => {
+  const sortItems = sortedKeys.reduce((acc, key) => {
     if (_.has(parseFile1, key) && !_.has(parseFile2, key)) {
       acc[`- ${key}`] = parseFile1[key];
     } else if (!_.has(parseFile1, key) && _.has(parseFile2, key)) {
@@ -31,7 +26,8 @@ const findDiff = (file1, file2) => {
       acc[`+ ${key}`] = parseFile2[key];
     } return acc;
   }, {});
-  return JSON.stringify(result, null, 2);
+  const result = JSON.stringify(sortItems, null, 2);
+  return result.replace(/"/g, '').replace(/,/g, '');
 };
 
 export default findDiff;
