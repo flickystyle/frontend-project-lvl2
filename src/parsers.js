@@ -7,7 +7,7 @@ const parse = (data, fileExtname) => {
   if (fileExtname === 'yaml' || fileExtname === 'yml') {
     return yaml.load(data);
   }
-  return console.error('extension is not supported');
+  return null;
 };
 
 export default parse;
