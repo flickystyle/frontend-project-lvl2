@@ -1,33 +1,43 @@
 import _ from 'lodash';
-import findPath from './findPath.js';
 
-const findDiff = (file1, file2) => {
-  const parseFile1 = findPath(file1);
-  const parseFile2 = findPath(file2);
+const makeItemsEmpty = (item) => {
+  if (typeof item !== 'object' || item === null) {
+    return item;
+  }
 
-  const firstFileKeys = Object.keys(parseFile1);
-  const secondFileKeys = Object.keys(parseFile2);
+  const entries = Object.entries(item);
+  const result = entries.reduce((acc, [key, value]) => ({ ...acc, [key]: ['unchanged', makeItemsEmpty(value)] }), {});
+  return result;
+};
 
-  const sortedKeys = _.union(firstFileKeys, secondFileKeys).sort();
+const findDiff = (obj1, obj2) => {
+  const firstFileKeys = Object.keys(obj1);
+  const secondFileKeys = Object.keys(obj2);
 
-  const sortItems = sortedKeys.reduce((acc, key) => {
-    if (_.has(parseFile1, key) && !_.has(parseFile2, key)) {
-      acc[`- ${key}`] = parseFile1[key];
-    } else if (!_.has(parseFile1, key) && _.has(parseFile2, key)) {
-      acc[`+ ${key}`] = parseFile2[key];
-    } else if (
-      _.has(parseFile1, key) && _.has(parseFile2, key) && parseFile1[key] === parseFile2[key]) {
-      acc[`  ${key}`] = parseFile1[key];
-    } else if (
-      _.has(parseFile1, key) && _.has(parseFile2, key)
-              && parseFile1[key] !== parseFile2[key]
-    ) {
-      acc[`- ${key}`] = parseFile1[key];
-      acc[`+ ${key}`] = parseFile2[key];
-    } return acc;
+  const keys = _.union(firstFileKeys, secondFileKeys);
+  const sortedKeys = _.sortBy(keys);
+
+  const result = sortedKeys.reduce((acc, key) => {
+    const itemsWithEmptyDiff1 = makeItemsEmpty(obj1[key]);
+    const itemsWithEmptyDiff2 = makeItemsEmpty(obj2[key]);
+
+    if (_.has(obj1, key) && !_.has(obj2, key)) {
+      return { ...acc, [key]: ['removed', itemsWithEmptyDiff1] };
+    }
+    if (!_.has(obj1, key) && _.has(obj2, key)) {
+      return { ...acc, [key]: ['added', itemsWithEmptyDiff2] };
+    }
+    if ((typeof obj1[key] === 'object') && (typeof obj2[key] === 'object')) {
+      return { ...acc, [key]: ['unchanged', findDiff(obj1[key], obj2[key])] };
+    }
+    if (obj1[key] !== obj2[key]) {
+      return { ...acc, [key]: ['updated', itemsWithEmptyDiff1, itemsWithEmptyDiff2] };
+    }
+
+    return { ...acc, [key]: ['unchanged', itemsWithEmptyDiff1] };
   }, {});
-  const result = JSON.stringify(sortItems, null, 2);
-  return result.replace(/"/g, '').replace(/,/g, '');
+
+  return result;
 };
 
 export default findDiff;
