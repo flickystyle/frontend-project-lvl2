@@ -15,7 +15,7 @@ const readFile = (filename) => {
   return parse(fs.readFileSync(getFixturePath(filename), 'utf-8'), fileExt);
 };
 
-describe('generateDiff for json', () => {
+describe('generateDiff for json (stylish)', () => {
   let file1Content;
   let file2Content;
   let expectedData;
@@ -24,7 +24,7 @@ describe('generateDiff for json', () => {
     file1Content = readFile('file1.json');
     file2Content = readFile('file2.json');
 
-    const expectedFile = fs.readFileSync(getFixturePath('testdata.txt'), 'utf-8');
+    const expectedFile = fs.readFileSync(getFixturePath('testdata-stylish.txt'), 'utf-8');
     expectedData = expectedFile.trim().split('\n\n\n');
   });
 
@@ -48,7 +48,7 @@ describe('generateDiff for json', () => {
   });
 });
 
-describe('generateDiff for yaml', () => {
+describe('generateDiff for yaml (stylish)', () => {
   let file1Content;
   let file2Content;
   let expectedData;
@@ -57,7 +57,7 @@ describe('generateDiff for yaml', () => {
     file1Content = readFile('file3.yaml');
     file2Content = readFile('file4.yml');
 
-    const expectedFile = fs.readFileSync(getFixturePath('testdata.txt'), 'utf-8');
+    const expectedFile = fs.readFileSync(getFixturePath('testdata-stylish.txt'), 'utf-8');
     expectedData = expectedFile.trim().split('\n\n\n');
   });
   test('show difference between same files', () => {
@@ -79,4 +79,91 @@ describe('generateDiff for yaml', () => {
     expect(actual2).toEqual(expected2);
   });
   console.log(file1Content);
+});
+
+describe('generateDiff for json (plain)', () => {
+  let file1Content;
+  let file2Content;
+  let expectedData;
+
+  beforeAll(() => {
+    file1Content = readFile('file1.json');
+    file2Content = readFile('file2.json');
+
+    const expectedFile = fs.readFileSync(getFixturePath('testdata-plain.txt'), 'utf-8');
+    expectedData = expectedFile.trim().split('\n\n\n');
+  });
+
+  test('show difference between same files', () => {
+    const expected = '';
+    const actual = generateDiff(file1Content, file1Content, 'plain');
+
+    expect(actual).toEqual(expected);
+  });
+
+  test('show difference between different files', () => {
+    const expected1 = expectedData[0];
+    const actual1 = generateDiff(file1Content, file2Content, 'plain');
+
+    expect(actual1).toEqual(expected1);
+
+    const expected2 = expectedData[1];
+    const actual2 = generateDiff(file2Content, file1Content, 'plain');
+
+    expect(actual2).toEqual(expected2);
+  });
+});
+
+describe('generateDiff for yaml (plain)', () => {
+  let file1Content;
+  let file2Content;
+  let expectedData;
+
+  beforeAll(() => {
+    file1Content = readFile('file3.yaml');
+    file2Content = readFile('file4.yml');
+
+    const expectedFile = fs.readFileSync(getFixturePath('testdata-plain.txt'), 'utf-8');
+    expectedData = expectedFile.trim().split('\n\n\n');
+  });
+
+  test('show difference between same files', () => {
+    const expected = '';
+    const actual = generateDiff(file1Content, file1Content, 'plain');
+
+    expect(actual).toEqual(expected);
+  });
+
+  test('show difference between different files', () => {
+    const expected1 = expectedData[0];
+    const actual1 = generateDiff(file1Content, file2Content, 'plain');
+
+    expect(actual1).toEqual(expected1);
+
+    const expected2 = expectedData[1];
+    const actual2 = generateDiff(file2Content, file1Content, 'plain');
+
+    expect(actual2).toEqual(expected2);
+  });
+});
+
+describe('throw an error', () => {
+  let file1Content;
+  let file2Content;
+
+  beforeAll(() => {
+    file1Content = readFile('file3.yaml');
+    file2Content = readFile('file4.yml');
+  });
+
+  test('it throw error on unknown formatter', () => {
+    expect(() => {
+      generateDiff(file1Content, file2Content, 'any');
+    }).toThrowError();
+  });
+  test('it throw error on wrong file extension', () => {
+    expect(() => {
+      parse(('file1.txt'), 'txt');
+    }).toThrowError();
+  });
 });
