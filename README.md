@@ -5,3 +5,5 @@
 <a href="https://codeclimate.com/github/flickystyle/frontend-project-lvl2/test_coverage"><img src="https://api.codeclimate.com/v1/badges/71aa804270a1649a7ca5/test_coverage" /></a>
 [![asciicast](https://asciinema.org/a/459013.svg)](https://asciinema.org/a/459013)
 [![asciicast](https://asciinema.org/a/467560.svg)](https://asciinema.org/a/467560)
+### plain
+[![asciicast](https://asciinema.org/a/484114.svg)](https://asciinema.org/a/484114)

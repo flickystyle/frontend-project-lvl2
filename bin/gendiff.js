@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander/esm.mjs';
 import findPath from '../src/findPath.js';
-import generateDiff from '../src/findDiff.js';
-import stylish from '../src/stylish.js';
+import generateDiff from '../src/generateDiff.js';
 
 const program = new Command();
 
@@ -18,7 +17,7 @@ program
 
     const options = program.opts();
 
-    const result = stylish(generateDiff(file1Data, file2Data, options.format));
+    const result = generateDiff(file1Data, file2Data, options.format);
 
     console.log(result);
   });

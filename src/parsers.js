@@ -7,7 +7,7 @@ const parse = (data, fileExtname) => {
   if (fileExtname === 'yaml' || fileExtname === 'yml') {
     return yaml.load(data);
   }
-  return null;
+  throw new Error('gendiff is not available for this extension');
 };
 
 export default parse;
