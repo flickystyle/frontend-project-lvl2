@@ -1,7 +1,10 @@
-const stylish = (value, replacer = ' ', spacesCount = 4) => {
-  const iter = (currentNode, depth) => {
-    if (typeof currentNode !== 'object' || currentNode === null) {
-      return `${currentNode}`;
+const stylish = (value) => {
+  const replacer = ' ';
+  const spacesCount = 4;
+
+  const iter = (currentValue, depth) => {
+    if (!Array.isArray(currentValue)) {
+      return `${currentValue}`;
     }
 
     const diffIndentSize = 2;
@@ -14,17 +17,18 @@ const stylish = (value, replacer = ' ', spacesCount = 4) => {
 
     const diffs = { removed: '-', added: '+', unchanged: ' ' };
 
-    const lines = Object
-      .entries(currentNode)
-      .map(([key, val]) => {
-        const currentDiff = val[0];
-        const unmodifiedValue = val[1];
-        const modifiedValue = val[2];
+    const lines = currentValue
+      .map((key) => {
+        const keyName = key.name;
+        const currentDiff = key.difference;
+        const unmodifiedValue = key.value;
+        const modifiedValue = key.updatedValue;
 
         if (currentDiff === 'updated') {
-          return `${currentIndent}${diffs.removed} ${key}: ${iter(unmodifiedValue, depth + 1)}\n${currentIndent}${diffs.added} ${key}: ${iter(modifiedValue, depth + 1)}`;
+          return `${currentIndent}${diffs.removed} ${keyName}: ${iter(unmodifiedValue, depth + 1)}\n${currentIndent}${diffs.added} ${keyName}: ${iter(modifiedValue, depth + 1)}`;
         }
-        return `${currentIndent}${diffs[currentDiff]} ${key}: ${iter(unmodifiedValue, depth + 1)}`;
+
+        return `${currentIndent}${diffs[currentDiff]} ${keyName}: ${iter(unmodifiedValue, depth + 1)}`;
       });
 
     return [

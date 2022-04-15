@@ -1,31 +1,29 @@
-import path from 'path';
-
-const stringify = (val) => {
-  if (val !== null && typeof val === 'object') {
+const stringify = (value) => {
+  if (Array.isArray(value)) {
     return '[complex value]';
   }
-  if (typeof val === 'string') {
-    return `'${val}'`;
+  if (typeof value === 'string') {
+    return `'${value}'`;
   }
-  return val;
+  return value;
 };
 
-const plain = (itemValue) => {
-  const iter = (currentValue, ancestry) => {
-    if (typeof currentValue !== 'object' || currentValue === null) {
+const plain = (value) => {
+  const iter = (currentValue, ancestry, separator) => {
+    if (!Array.isArray(currentValue)) {
       return '';
     }
 
-    const lines = Object
-      .entries(currentValue)
-      .map(([key, val]) => {
-        const newAncestry = (path.join(ancestry, key)).replaceAll('/', '.');
-        const currentDiff = val[0];
-        const unmodifiedValue = stringify(val[1]);
-        const modifiedValue = stringify(val[2]);
+    const lines = currentValue
+      .map((key) => {
+        const newAncestry = `${ancestry}${separator}${key.name}`;
+        const currentDiff = key.difference;
+        const unmodifiedValue = stringify(key.value);
+        const modifiedValue = stringify(key.updatedValue);
+        const newSeparator = '.';
 
         if (currentDiff === 'unchanged') {
-          return iter(val[1], newAncestry);
+          return iter(key.value, newAncestry, newSeparator);
         }
         if (currentDiff === 'removed') {
           return `Property '${newAncestry}' was removed`;
@@ -42,7 +40,7 @@ const plain = (itemValue) => {
     return lines.join('\n');
   };
 
-  return iter(itemValue, '');
+  return iter(value, '', '');
 };
 
 export default plain;
