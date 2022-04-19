@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import { Command } from 'commander/esm.mjs';
-import findPath from '../src/findPath.js';
 import generateDiff from '../src/generateDiff.js';
 
 const program = new Command();
@@ -12,12 +11,9 @@ program
   .argument('<filepath1>')
   .argument('<filepath2>')
   .action((filepath1, filepath2) => {
-    const file1Data = findPath(filepath1);
-    const file2Data = findPath(filepath2);
-
     const options = program.opts();
 
-    const result = generateDiff(file1Data, file2Data, options.format);
+    const result = generateDiff(filepath1, filepath2, options.format);
 
     console.log(result);
   });
