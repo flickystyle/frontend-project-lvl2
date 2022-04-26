@@ -1,5 +1,5 @@
 const stringify = (value) => {
-  if (Array.isArray(value)) {
+  if (typeof value === 'object' && value !== null) {
     return '[complex value]';
   }
   if (typeof value === 'string') {
@@ -8,39 +8,35 @@ const stringify = (value) => {
   return value;
 };
 
-const plain = (value) => {
-  const iter = (currentValue, ancestry, separator) => {
-    if (!Array.isArray(currentValue)) {
-      return '';
-    }
-
-    const lines = currentValue
-      .map((key) => {
-        const newAncestry = `${ancestry}${separator}${key.name}`;
-        const currentDiff = key.difference;
-        const unmodifiedValue = stringify(key.value);
-        const modifiedValue = stringify(key.updatedValue);
+const plain = (node) => {
+  const iter = (currentNode, ancestry, separator) => {
+    const lines = currentNode
+      .map((child) => {
+        const newAncestry = `${ancestry}${separator}${child.name}`;
+        const currentStatus = child.status;
         const newSeparator = '.';
 
-        if (currentDiff === 'unchanged') {
-          return iter(key.value, newAncestry, newSeparator);
+        switch (currentStatus) {
+          case 'nested':
+            return iter(child.children, newAncestry, newSeparator);
+          case 'unchanged':
+            return '';
+          case 'removed':
+            return `Property '${newAncestry}' was removed`;
+          case 'added':
+            return `Property '${newAncestry}' was added with value: ${stringify(child.value)}`;
+          case 'updated':
+            return `Property '${newAncestry}' was updated. From ${stringify(child.oldValue)} to ${stringify(child.newValue)}`;
+          default:
+            throw new Error(`Unknown difference: '${currentStatus}'!`);
         }
-        if (currentDiff === 'removed') {
-          return `Property '${newAncestry}' was removed`;
-        }
-
-        if (currentDiff === 'added') {
-          return `Property '${newAncestry}' was added with value: ${unmodifiedValue}`;
-        }
-
-        return `Property '${newAncestry}' was updated. From ${unmodifiedValue} to ${modifiedValue}`;
       })
       .filter((line) => line.length !== 0);
 
     return lines.join('\n');
   };
 
-  return iter(value, '', '');
+  return iter(node, '', '');
 };
 
 export default plain;

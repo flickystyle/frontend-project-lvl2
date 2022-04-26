@@ -4,13 +4,13 @@ import readContent from './readContent.js';
 import parse from './parsers.js';
 
 const generateDiff = (filepath1, filepath2, formatter = 'stylish') => {
-  const file1Data = readContent(filepath1);
-  const file2Data = readContent(filepath2);
+  const [firstFileContent, firstFileExtName] = readContent(filepath1);
+  const [secondFileContent, secondFileExtName] = readContent(filepath2);
 
-  const parsedFile1 = parse(file1Data);
-  const parsedFile2 = parse(file2Data);
+  const firstParsedFile = parse(firstFileContent, firstFileExtName);
+  const secondParsedFile = parse(secondFileContent, secondFileExtName);
 
-  const diff = findDiff(parsedFile1, parsedFile2);
+  const diff = findDiff(firstParsedFile, secondParsedFile);
 
   return chooseFormatter(diff, formatter);
 };

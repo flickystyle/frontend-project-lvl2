@@ -1,35 +1,20 @@
-const stylish = (value) => {
+const stylish = (node) => {
   const replacer = ' ';
   const spacesCount = 4;
 
-  const iter = (currentValue, depth) => {
-    if (!Array.isArray(currentValue)) {
-      return `${currentValue}`;
+  const formatValue = (value, depth) => {
+    if (typeof value !== 'object' || value === null) {
+      return value;
     }
-
-    const diffIndentSize = 2;
-    const indentSize = (spacesCount * depth) - diffIndentSize;
-    const currentIndent = replacer.repeat(indentSize);
+    const nestedIndentSize = (spacesCount * depth);
+    const nestedIndent = replacer.repeat(nestedIndentSize);
 
     const previousDepth = depth - 1;
     const bracketIndentSize = spacesCount * previousDepth;
     const bracketIndent = replacer.repeat(bracketIndentSize);
 
-    const diffs = { removed: '-', added: '+', unchanged: ' ' };
-
-    const lines = currentValue
-      .map((key) => {
-        const keyName = key.name;
-        const currentDiff = key.difference;
-        const unmodifiedValue = key.value;
-        const modifiedValue = key.updatedValue;
-
-        if (currentDiff === 'updated') {
-          return `${currentIndent}${diffs.removed} ${keyName}: ${iter(unmodifiedValue, depth + 1)}\n${currentIndent}${diffs.added} ${keyName}: ${iter(modifiedValue, depth + 1)}`;
-        }
-
-        return `${currentIndent}${diffs[currentDiff]} ${keyName}: ${iter(unmodifiedValue, depth + 1)}`;
-      });
+    const entries = Object.entries(value);
+    const lines = entries.map(([key, val]) => `${nestedIndent}${key}: ${formatValue(val, depth + 1)}`);
 
     return [
       '{',
@@ -38,7 +23,40 @@ const stylish = (value) => {
     ].join('\n');
   };
 
-  return iter(value, 1);
+  const iter = (currentNode, depth) => {
+    const diffIndentSize = 2;
+    const indentSize = (spacesCount * depth) - diffIndentSize;
+    const currentIndent = replacer.repeat(indentSize);
+
+    const previousDepth = depth - 1;
+    const bracketIndentSize = spacesCount * previousDepth;
+    const bracketIndent = replacer.repeat(bracketIndentSize);
+
+    const lines = currentNode
+      .map((child) => {
+        const currentStatus = child.status;
+        switch (currentStatus) {
+          case 'nested':
+            return `${currentIndent}  ${child.name}: ${iter(child.children, depth + 1)}`;
+          case 'unchanged':
+            return `${currentIndent}  ${child.name}: ${formatValue(child.value, depth + 1)}`;
+          case 'removed':
+            return `${currentIndent}- ${child.name}: ${formatValue(child.value, depth + 1)}`;
+          case 'added':
+            return `${currentIndent}+ ${child.name}: ${formatValue(child.value, depth + 1)}`;
+          case 'updated':
+            return `${currentIndent}- ${child.name}: ${formatValue(child.oldValue, depth + 1)}\n${currentIndent}+ ${child.name}: ${formatValue(child.newValue, depth + 1)}`;
+          default:
+            throw new Error(`Unknown difference: '${currentStatus}'!`);
+        }
+      });
+    return [
+      '{',
+      ...lines,
+      `${bracketIndent}}`,
+    ].join('\n');
+  };
+  return iter(node, 1);
 };
 
 export default stylish;
