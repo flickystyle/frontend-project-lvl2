@@ -10,165 +10,70 @@ const __dirname = dirname(__filename);
 
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 
-describe('generateDiff for json (stylish)', () => {
-  const file1Path = getFixturePath('file1.json');
-  const file2Path = getFixturePath('file2.json');
+const testDataStylish = fs.readFileSync(getFixturePath('testdata-stylish.txt'), 'utf-8');
+const testDataPlain = fs.readFileSync(getFixturePath('testdata-plain.txt'), 'utf-8');
+const testDataJson = fs.readFileSync(getFixturePath('testdata-json.txt'), 'utf-8');
 
-  const expectedFile = fs.readFileSync(getFixturePath('testdata-stylish.txt'), 'utf-8');
-  const expectedData = expectedFile.trim().split('\n\n\n');
+describe('generateDiff (stylish)', () => {
+  const testData = testDataStylish.trim().split('\n\n\n');
 
-  test('difference between same files', () => {
-    const expected = expectedData[0];
-    const actual = generateDiff(file1Path, file1Path);
+  const data = [
+    ['file1.json', 'file1.json', testData[0]],
+    ['file1.json', 'file2.json', testData[1]],
+    ['file2.json', 'file1.json', testData[2]],
+    ['file3.yaml', 'file3.yaml', testData[0]],
+    ['file3.yaml', 'file4.yml', testData[1]],
+    ['file4.yml', 'file3.yaml', testData[2]],
+  ];
 
+  test.each(data)('difference between %s and %s', (filename1, filename2, expected) => {
+    const file1Path = getFixturePath(filename1);
+    const file2Path = getFixturePath(filename2);
+
+    const actual = generateDiff(file1Path, file2Path);
     expect(actual).toEqual(expected);
-  });
-
-  test('difference between different files', () => {
-    const expected1 = expectedData[1];
-    const actual1 = generateDiff(file1Path, file2Path);
-
-    expect(actual1).toEqual(expected1);
-
-    const expected2 = expectedData[2];
-    const actual2 = generateDiff(file2Path, file1Path);
-
-    expect(actual2).toEqual(expected2);
   });
 });
 
-describe('generateDiff for yaml (stylish)', () => {
-  const file1Path = getFixturePath('file3.yaml');
-  const file2Path = getFixturePath('file4.yml');
+describe('generateDiff (plain)', () => {
+  const testData = testDataPlain.trim().split('\n\n\n');
 
-  const expectedFile = fs.readFileSync(getFixturePath('testdata-stylish.txt'), 'utf-8');
-  const expectedData = expectedFile.trim().split('\n\n\n');
+  const data = [
+    ['file1.json', 'file1.json', 'plain', ''],
+    ['file1.json', 'file2.json', 'plain', testData[0]],
+    ['file2.json', 'file1.json', 'plain', testData[1]],
+    ['file3.yaml', 'file3.yaml', 'plain', ''],
+    ['file3.yaml', 'file4.yml', 'plain', testData[0]],
+    ['file4.yml', 'file3.yaml', 'plain', testData[1]],
+  ];
 
-  test('difference between same files', () => {
-    const expected = expectedData[0];
-    const actual = generateDiff(file1Path, file1Path);
+  test.each(data)('difference between %s and %s', (filename1, filename2, formatter, expected) => {
+    const file1Path = getFixturePath(filename1);
+    const file2Path = getFixturePath(filename2);
 
+    const actual = generateDiff(file1Path, file2Path, formatter);
     expect(actual).toEqual(expected);
-  });
-
-  test('difference between different files', () => {
-    const expected1 = expectedData[1];
-    const actual1 = generateDiff(file1Path, file2Path);
-
-    expect(actual1).toEqual(expected1);
-
-    const expected2 = expectedData[2];
-    const actual2 = generateDiff(file2Path, file1Path);
-
-    expect(actual2).toEqual(expected2);
   });
 });
 
-describe('generateDiff for json (plain)', () => {
-  const file1Path = getFixturePath('file1.json');
-  const file2Path = getFixturePath('file2.json');
+describe('generateDiff (json formatter)', () => {
+  const testData = testDataJson.trim().split('\n\n\n');
 
-  const expectedFile = fs.readFileSync(getFixturePath('testdata-plain.txt'), 'utf-8');
-  const expectedData = expectedFile.trim().split('\n\n\n');
+  const data = [
+    ['file1.json', 'file1.json', 'json', testData[0]],
+    ['file1.json', 'file2.json', 'json', testData[1]],
+    ['file2.json', 'file1.json', 'json', testData[2]],
+    ['file3.yaml', 'file3.yaml', 'json', testData[0]],
+    ['file3.yaml', 'file4.yml', 'json', testData[1]],
+    ['file4.yml', 'file3.yaml', 'json', testData[2]],
+  ];
 
-  test('difference between same files', () => {
-    const expected = '';
-    const actual = generateDiff(file1Path, file1Path, 'plain');
+  test.each(data)('difference between %s and %s', (filename1, filename2, formatter, expected) => {
+    const file1Path = getFixturePath(filename1);
+    const file2Path = getFixturePath(filename2);
 
+    const actual = generateDiff(file1Path, file2Path, formatter);
     expect(actual).toEqual(expected);
-  });
-
-  test('difference between different files', () => {
-    const expected1 = expectedData[0];
-    const actual1 = generateDiff(file1Path, file2Path, 'plain');
-
-    expect(actual1).toEqual(expected1);
-
-    const expected2 = expectedData[1];
-    const actual2 = generateDiff(file2Path, file1Path, 'plain');
-
-    expect(actual2).toEqual(expected2);
-  });
-});
-
-describe('generateDiff for yaml (plain)', () => {
-  const file1Path = getFixturePath('file3.yaml');
-  const file2Path = getFixturePath('file4.yml');
-
-  const expectedFile = fs.readFileSync(getFixturePath('testdata-plain.txt'), 'utf-8');
-  const expectedData = expectedFile.trim().split('\n\n\n');
-
-  test('difference between same files', () => {
-    const expected = '';
-    const actual = generateDiff(file1Path, file1Path, 'plain');
-
-    expect(actual).toEqual(expected);
-  });
-
-  test('difference between different files', () => {
-    const expected1 = expectedData[0];
-    const actual1 = generateDiff(file1Path, file2Path, 'plain');
-
-    expect(actual1).toEqual(expected1);
-
-    const expected2 = expectedData[1];
-    const actual2 = generateDiff(file2Path, file1Path, 'plain');
-
-    expect(actual2).toEqual(expected2);
-  });
-});
-
-describe('generateDiff for json (json formatter)', () => {
-  const file1Path = getFixturePath('file1.json');
-  const file2Path = getFixturePath('file2.json');
-
-  const expectedFile = fs.readFileSync(getFixturePath('testdata-json.txt'), 'utf-8');
-  const expectedData = expectedFile.trim().split('\n\n\n');
-
-  test('difference between same files', () => {
-    const expected = expectedData[0];
-    const actual = generateDiff(file1Path, file1Path, 'json');
-
-    expect(actual).toEqual(expected);
-  });
-
-  test('difference between different files', () => {
-    const expected1 = expectedData[1];
-    const actual1 = generateDiff(file1Path, file2Path, 'json');
-
-    expect(actual1).toEqual(expected1);
-
-    const expected2 = expectedData[2];
-    const actual2 = generateDiff(file2Path, file1Path, 'json');
-
-    expect(actual2).toEqual(expected2);
-  });
-});
-
-describe('generateDiff for yaml (json formatter)', () => {
-  const file1Path = getFixturePath('file3.yaml');
-  const file2Path = getFixturePath('file4.yml');
-
-  const expectedFile = fs.readFileSync(getFixturePath('testdata-json.txt'), 'utf-8');
-  const expectedData = expectedFile.trim().split('\n\n\n');
-
-  test('difference between same files', () => {
-    const expected = expectedData[0];
-    const actual = generateDiff(file1Path, file1Path, 'json');
-
-    expect(actual).toEqual(expected);
-  });
-
-  test('difference between different files', () => {
-    const expected1 = expectedData[1];
-    const actual1 = generateDiff(file1Path, file2Path, 'json');
-
-    expect(actual1).toEqual(expected1);
-
-    const expected2 = expectedData[2];
-    const actual2 = generateDiff(file2Path, file1Path, 'json');
-
-    expect(actual2).toEqual(expected2);
   });
 });
 
