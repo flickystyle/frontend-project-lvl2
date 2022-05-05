@@ -1,5 +1,8 @@
 const stylish = (node) => {
-  const replacer = ' ';
+  const generateReplacer = (value) => {
+    const replacer = ' ';
+    return replacer.repeat(value);
+  };
   const spacesCount = 4;
 
   const formatValue = (value, depth) => {
@@ -7,11 +10,11 @@ const stylish = (node) => {
       return value;
     }
     const nestedIndentSize = (spacesCount * depth);
-    const nestedIndent = replacer.repeat(nestedIndentSize);
+    const nestedIndent = generateReplacer(nestedIndentSize);
 
     const previousDepth = depth - 1;
     const bracketIndentSize = spacesCount * previousDepth;
-    const bracketIndent = replacer.repeat(bracketIndentSize);
+    const bracketIndent = generateReplacer(bracketIndentSize);
 
     const entries = Object.entries(value);
     const lines = entries.map(([key, val]) => `${nestedIndent}${key}: ${formatValue(val, depth + 1)}`);
@@ -26,13 +29,13 @@ const stylish = (node) => {
   const iter = (currentNode, depth) => {
     const diffIndentSize = 2;
     const indentSize = (spacesCount * depth) - diffIndentSize;
-    const currentIndent = replacer.repeat(indentSize);
+    const currentIndent = generateReplacer(indentSize);
 
     const previousDepth = depth - 1;
     const bracketIndentSize = spacesCount * previousDepth;
-    const bracketIndent = replacer.repeat(bracketIndentSize);
+    const bracketIndent = generateReplacer(bracketIndentSize);
 
-    const lines = currentNode
+    const lines = currentNode.root
       .map((child) => {
         const currentStatus = child.status;
         switch (currentStatus) {

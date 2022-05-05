@@ -1,5 +1,5 @@
-import * as path from 'path';
-import * as fs from 'fs';
+import path from 'path';
+import fs from 'fs';
 
 const readContent = (filepath) => {
   const dataExtname = path.extname(filepath).slice(1);

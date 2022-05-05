@@ -10,7 +10,7 @@ const stringify = (value) => {
 
 const plain = (node) => {
   const iter = (currentNode, ancestry, separator) => {
-    const lines = currentNode
+    const lines = currentNode.root
       .map((child) => {
         const newAncestry = `${ancestry}${separator}${child.name}`;
         const currentStatus = child.status;

@@ -14,61 +14,33 @@ const testDataStylish = fs.readFileSync(getFixturePath('testdata-stylish.txt'), 
 const testDataPlain = fs.readFileSync(getFixturePath('testdata-plain.txt'), 'utf-8');
 const testDataJson = fs.readFileSync(getFixturePath('testdata-json.txt'), 'utf-8');
 
-describe('generateDiff (stylish)', () => {
-  const testData = testDataStylish.trim().split('\n\n\n');
+describe('generateDiff )', () => {
+  const expectedDataStylish = testDataStylish.trim().split('\n\n\n');
+  const expectedDataPlain = testDataPlain.trim().split('\n\n\n');
+  const expextedDataJson = testDataJson.trim().split('\n\n\n');
 
   const data = [
-    ['file1.json', 'file1.json', testData[0]],
-    ['file1.json', 'file2.json', testData[1]],
-    ['file2.json', 'file1.json', testData[2]],
-    ['file3.yaml', 'file3.yaml', testData[0]],
-    ['file3.yaml', 'file4.yml', testData[1]],
-    ['file4.yml', 'file3.yaml', testData[2]],
-  ];
-
-  test.each(data)('difference between %s and %s', (filename1, filename2, expected) => {
-    const file1Path = getFixturePath(filename1);
-    const file2Path = getFixturePath(filename2);
-
-    const actual = generateDiff(file1Path, file2Path);
-    expect(actual).toEqual(expected);
-  });
-});
-
-describe('generateDiff (plain)', () => {
-  const testData = testDataPlain.trim().split('\n\n\n');
-
-  const data = [
+    ['file1.json', 'file1.json', 'stylish', expectedDataStylish[0]],
+    ['file1.json', 'file2.json', 'stylish', expectedDataStylish[1]],
+    ['file2.json', 'file1.json', 'stylish', expectedDataStylish[2]],
+    ['file3.yaml', 'file3.yaml', 'stylish', expectedDataStylish[0]],
+    ['file3.yaml', 'file4.yml', 'stylish', expectedDataStylish[1]],
+    ['file4.yml', 'file3.yaml', 'stylish', expectedDataStylish[2]],
     ['file1.json', 'file1.json', 'plain', ''],
-    ['file1.json', 'file2.json', 'plain', testData[0]],
-    ['file2.json', 'file1.json', 'plain', testData[1]],
+    ['file1.json', 'file2.json', 'plain', expectedDataPlain[0]],
+    ['file2.json', 'file1.json', 'plain', expectedDataPlain[1]],
     ['file3.yaml', 'file3.yaml', 'plain', ''],
-    ['file3.yaml', 'file4.yml', 'plain', testData[0]],
-    ['file4.yml', 'file3.yaml', 'plain', testData[1]],
+    ['file3.yaml', 'file4.yml', 'plain', expectedDataPlain[0]],
+    ['file4.yml', 'file3.yaml', 'plain', expectedDataPlain[1]],
+    ['file1.json', 'file1.json', 'json', expextedDataJson[0]],
+    ['file1.json', 'file2.json', 'json', expextedDataJson[1]],
+    ['file2.json', 'file1.json', 'json', expextedDataJson[2]],
+    ['file3.yaml', 'file3.yaml', 'json', expextedDataJson[0]],
+    ['file3.yaml', 'file4.yml', 'json', expextedDataJson[1]],
+    ['file4.yml', 'file3.yaml', 'json', expextedDataJson[2]],
   ];
 
-  test.each(data)('difference between %s and %s', (filename1, filename2, formatter, expected) => {
-    const file1Path = getFixturePath(filename1);
-    const file2Path = getFixturePath(filename2);
-
-    const actual = generateDiff(file1Path, file2Path, formatter);
-    expect(actual).toEqual(expected);
-  });
-});
-
-describe('generateDiff (json formatter)', () => {
-  const testData = testDataJson.trim().split('\n\n\n');
-
-  const data = [
-    ['file1.json', 'file1.json', 'json', testData[0]],
-    ['file1.json', 'file2.json', 'json', testData[1]],
-    ['file2.json', 'file1.json', 'json', testData[2]],
-    ['file3.yaml', 'file3.yaml', 'json', testData[0]],
-    ['file3.yaml', 'file4.yml', 'json', testData[1]],
-    ['file4.yml', 'file3.yaml', 'json', testData[2]],
-  ];
-
-  test.each(data)('difference between %s and %s', (filename1, filename2, formatter, expected) => {
+  test.each(data)('diff between %s and %s ( %s formatter)', (filename1, filename2, formatter, expected) => {
     const file1Path = getFixturePath(filename1);
     const file2Path = getFixturePath(filename2);
 
