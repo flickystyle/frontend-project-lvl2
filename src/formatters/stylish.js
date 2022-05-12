@@ -1,31 +1,7 @@
+import { generateReplacer, formatValue } from './replacerAndFormat.js';
+
 const stylish = (node) => {
-  const generateReplacer = (value) => {
-    const replacer = ' ';
-    return replacer.repeat(value);
-  };
   const spacesCount = 4;
-
-  const formatValue = (value, depth) => {
-    if (typeof value !== 'object' || value === null) {
-      return value;
-    }
-    const nestedIndentSize = (spacesCount * depth);
-    const nestedIndent = generateReplacer(nestedIndentSize);
-
-    const previousDepth = depth - 1;
-    const bracketIndentSize = spacesCount * previousDepth;
-    const bracketIndent = generateReplacer(bracketIndentSize);
-
-    const entries = Object.entries(value);
-    const lines = entries.map(([key, val]) => `${nestedIndent}${key}: ${formatValue(val, depth + 1)}`);
-
-    return [
-      '{',
-      ...lines,
-      `${bracketIndent}}`,
-    ].join('\n');
-  };
-
   const iter = (currentNode, depth) => {
     const diffIndentSize = 2;
     const indentSize = (spacesCount * depth) - diffIndentSize;
@@ -35,7 +11,7 @@ const stylish = (node) => {
     const bracketIndentSize = spacesCount * previousDepth;
     const bracketIndent = generateReplacer(bracketIndentSize);
 
-    const lines = currentNode.root
+    const lines = currentNode.children
       .map((child) => {
         const currentStatus = child.status;
         switch (currentStatus) {

@@ -13,7 +13,6 @@ const chooseFormatter = (difference, formatter) => {
   if (formatter === 'json') {
     return jsonFormatter(difference);
   }
-
   throw new Error('gendiff is not available for this format');
 };
 

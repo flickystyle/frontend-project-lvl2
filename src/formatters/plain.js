@@ -8,35 +8,30 @@ const stringify = (value) => {
   return value;
 };
 
-const plain = (node) => {
-  const iter = (currentNode, ancestry, separator) => {
-    const lines = currentNode.root
-      .map((child) => {
-        const newAncestry = `${ancestry}${separator}${child.name}`;
-        const currentStatus = child.status;
-        const newSeparator = '.';
+const plain = (node, separator = '', ancestry = '') => {
+  const currentStatus = node.status;
+  const currentChild = node.children;
+  const newAncestry = `${ancestry}${separator}${node.name}`;
+  const newSeparator = '.';
 
-        switch (currentStatus) {
-          case 'nested':
-            return iter(child.children, newAncestry, newSeparator);
-          case 'unchanged':
-            return '';
-          case 'removed':
-            return `Property '${newAncestry}' was removed`;
-          case 'added':
-            return `Property '${newAncestry}' was added with value: ${stringify(child.value)}`;
-          case 'updated':
-            return `Property '${newAncestry}' was updated. From ${stringify(child.oldValue)} to ${stringify(child.newValue)}`;
-          default:
-            throw new Error(`Unknown difference: '${currentStatus}'!`);
-        }
-      })
-      .filter((line) => line.length !== 0);
-
-    return lines.join('\n');
-  };
-
-  return iter(node, '', '');
+  switch (currentStatus) {
+    case 'root':
+      return currentChild.map((child) => plain(child))
+        .filter((line) => line.length !== 0).join('\n');
+    case 'nested':
+      return currentChild.children.map((child) => plain(child, newSeparator, `${newAncestry}`))
+        .filter((line) => line.length !== 0).join('\n');
+    case 'unchanged':
+      return '';
+    case 'removed':
+      return `Property '${newAncestry}' was removed`;
+    case 'added':
+      return `Property '${newAncestry}' was added with value: ${stringify(node.value)}`;
+    case 'updated':
+      return `Property '${newAncestry}' was updated. From ${stringify(node.oldValue)} to ${stringify(node.newValue)}`;
+    default:
+      throw new Error(`Unknown difference: '${currentStatus}'!`);
+  }
 };
 
 export default plain;

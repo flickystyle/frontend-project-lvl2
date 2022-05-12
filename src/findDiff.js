@@ -7,7 +7,7 @@ const findDiff = (obj1, obj2) => {
   const keys = _.union(firstKeys, secondKeys);
   const sortedKeys = _.sortBy(keys);
 
-  const children = sortedKeys.reduce((acc, key) => {
+  const result = sortedKeys.reduce((acc, key) => {
     if (_.has(obj1, key) && !_.has(obj2, key)) {
       return [...acc, { name: key, status: 'removed', value: obj1[key] }];
     }
@@ -24,12 +24,8 @@ const findDiff = (obj1, obj2) => {
     }
     return [...acc, { name: key, status: 'unchanged', value: obj1[key] }];
   }, []);
-  // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  // Глеб, я извиняюсь XD Не совсем понимаю, что от меня требуется, какой должна быть структура
-  // обЪекта, если можно по подробнее обЪяснить или пример какой дать, как это должно выглядеть.
-  // Буду очень благодарен. Заранее спасибо)
-  // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  return { root: children };
+
+  return { status: 'root', children: result };
 };
 
 export default findDiff;
