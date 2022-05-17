@@ -1,4 +1,9 @@
-import { generateReplacer, formatValue } from './replacerAndFormat.js';
+import _ from 'lodash';
+
+const generateReplacer = (value) => {
+  const replacer = ' ';
+  return replacer.repeat(value);
+};
 
 const stylish = (node, depth = 1) => {
   const spacesCount = 4;
@@ -13,6 +18,14 @@ const stylish = (node, depth = 1) => {
 
   const currentStatus = node.status;
   const currentChild = node.children;
+
+  const formatValue = (value) => {
+    if (!_.isObject(value)) {
+      return value;
+    }
+    const obj = { status: 'unchanged', key: value };
+    return stylish(obj);
+  };
 
   switch (currentStatus) {
     case 'root':
