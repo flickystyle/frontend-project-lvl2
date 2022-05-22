@@ -21,10 +21,8 @@ const stylish = (node, depth = 1) => {
     if (typeof value !== 'object' || value === null) {
       return value;
     }
-
     const entries = Object.entries(value);
     const lines = entries.map(([key, val]) => stylish({ status: 'unchanged', name: key, value: val }, depth + 1));
-    console.log(lines);
     return `{\n${lines.join('\n')}\n${bracketIndent}    }`;
   };
 
