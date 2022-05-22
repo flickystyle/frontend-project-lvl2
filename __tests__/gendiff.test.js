@@ -1,7 +1,6 @@
-import { dirname } from 'path';
+import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
 import generateDiff from '../src/generateDiff.js';
 import parse from '../src/parsers.js';
 
