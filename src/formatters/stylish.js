@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 const generateReplacer = (value) => {
   const replacer = ' ';
   return replacer.repeat(value);
@@ -20,11 +18,14 @@ const stylish = (node, depth = 1) => {
   const currentChild = node.children;
 
   const formatValue = (value) => {
-    if (!_.isObject(value)) {
+    if (typeof value !== 'object' || value === null) {
       return value;
     }
-    const obj = { status: 'unchanged', key: value };
-    return stylish(obj);
+
+    const entries = Object.entries(value);
+    const lines = entries.map(([key, val]) => stylish({ status: 'unchanged', name: key, value: val }, depth + 1));
+    console.log(lines);
+    return `{\n${lines.join('\n')}\n${bracketIndent}    }`;
   };
 
   switch (currentStatus) {
