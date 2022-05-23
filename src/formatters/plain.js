@@ -8,27 +8,27 @@ const stringify = (value) => {
   return value;
 };
 
-const plain = (node, ancestry = []) => {
+const plain = (node, previousKeys = []) => {
   const currentStatus = node.status;
   const currentChild = node.children;
-  const makeAncestry = [...ancestry, node.name];
-  const newAncestry = makeAncestry.slice(1).join('.');
+  const newKeys = [...previousKeys, node.name];
+  const currentProperty = newKeys.slice(1).join('.');
 
   switch (currentStatus) {
     case 'root':
-      return currentChild.map((child) => plain(child, makeAncestry))
+      return currentChild.map((child) => plain(child, newKeys))
         .join('\n');
     case 'nested':
-      return currentChild.children.map((child) => plain(child, makeAncestry))
+      return currentChild.children.map((child) => plain(child, newKeys))
         .filter((line) => line.length !== 0).join('\n');
     case 'unchanged':
       return '';
     case 'removed':
-      return `Property '${newAncestry}' was removed`;
+      return `Property '${currentProperty}' was removed`;
     case 'added':
-      return `Property '${newAncestry}' was added with value: ${stringify(node.value)}`;
+      return `Property '${currentProperty}' was added with value: ${stringify(node.value)}`;
     case 'updated':
-      return `Property '${newAncestry}' was updated. From ${stringify(node.oldValue)} to ${stringify(node.newValue)}`;
+      return `Property '${currentProperty}' was updated. From ${stringify(node.oldValue)} to ${stringify(node.newValue)}`;
     default:
       throw new Error(`Unknown difference: '${currentStatus}'!`);
   }
